@@ -110,7 +110,7 @@ class TodoListViewController: UITableViewController {
             
             self.itemArray.append(newItem)
             
-          //  self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
             self.tableView.reloadData()
             
