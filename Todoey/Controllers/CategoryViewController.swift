@@ -9,8 +9,9 @@
 import UIKit
 //import CoreData
 import RealmSwift
+import SwipeCellKit
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: UITableViewController  {
     
     let realm = try! Realm()
 
@@ -29,6 +30,8 @@ class CategoryViewController: UITableViewController {
 
         loadCategories()
         
+        tableView.rowHeight = 80.0
+        
     }
     
 
@@ -39,10 +42,18 @@ class CategoryViewController: UITableViewController {
         return categoryArray?.count ?? 1
     }
     
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
+//        cell.delegate = self
+//        return cell
+//    }
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath) as! SwipeTableViewCell
+        
+        cell.delegate = self
         
         cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Categories added yet"
 
@@ -143,8 +154,6 @@ class CategoryViewController: UITableViewController {
             print("this is destinationVC \(destinationVC)")
          }
         }
-        
 }
 
-    
-
+//MARK: - Swipe Cell Delegate Methods
