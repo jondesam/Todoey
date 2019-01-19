@@ -2,7 +2,7 @@ import UIKit
 //import CoreData
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
 
 //    var itemArray = [Item]()
     
@@ -10,6 +10,7 @@ class TodoListViewController: UITableViewController {
     var realm = try! Realm()
     
     //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
     //using UserDefaults
     //let defaults = UserDefaults.standard
     
@@ -27,10 +28,13 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         dump("this is itemArray \(todoItems)")
+        
+      
   //      dump("this is context \(context)")
         
        // print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
+
+//ex
 //        let newItem = Item()
 //        newItem.title = "Find Mike"
 //        itemArray.append(newItem)
@@ -94,7 +98,11 @@ class TodoListViewController: UITableViewController {
         
         //let cell = UITableViewCell(style: .default, reuseIdentifier: "ToDoItemCell")
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        
+        //before inherite swipe function from superClass
+        //let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             
@@ -130,9 +138,8 @@ class TodoListViewController: UITableViewController {
     
     //MARK: TableView Delegate Methods
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { 
        
-        
         if let item = todoItems?[indexPath.row] {
             do {
                 try realm.write {
@@ -175,6 +182,22 @@ class TodoListViewController: UITableViewController {
        tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    //MARK: - Delete Data From Swipe
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = self.todoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    //delete
+                    self.realm.delete(item)
+                    // update
+                    //item.done = !item.done
+                }
+            } catch {
+                print("Error saving sone status, \(error)")
+            }
+        }
+    }
+    
     
     
     
@@ -184,14 +207,6 @@ class TodoListViewController: UITableViewController {
         var textField = UITextField()
         
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
-        
-//        let formatter = DateFormatter()
-//
-//        formatter.timeZone = TimeZone.current
-//
-//        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-        
-        let myTimeInterval = TimeInterval()
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // what will happen once the user presses Add Item button on our UIalert
@@ -247,7 +262,7 @@ class TodoListViewController: UITableViewController {
 //            }
 //
             
-            
+    
           // self.saveItems()
             
 //            self.defaults.set(self.itemArray, forKey: "TodoListArray")
@@ -430,6 +445,9 @@ class TodoListViewController: UITableViewController {
         
         tableView.reloadData()
     }
+    
+    
+
     
     
     
