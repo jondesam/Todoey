@@ -1,6 +1,7 @@
 import UIKit
 //import CoreData
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
 
@@ -107,6 +108,44 @@ class TodoListViewController: SwipeTableViewController {
         if let item = todoItems?[indexPath.row] {
             
             cell.textLabel?.text = item.title
+            
+         
+// preview lines before optional binding
+//            cell.backgroundColor = FlatSkyBlue().darken(byPercentage:
+//
+//                //currently on row #1.
+//                //there's a total of 10 items in todoItems
+//
+//                CGFloat(indexPath.row / todoItems?.count)
+//            )
+
+// with optional binding
+            
+            if let color = FlatSkyBlue().darken(byPercentage: CGFloat(indexPath.row) /  CGFloat(todoItems!.count))
+                
+                
+// integer / integer = sometimes below 1 always 0
+//                FlatSkyBlue().darken(byPercentage: CGFloat(indexPath.row / todoItems!.count))
+            
+            {
+                cell.backgroundColor = color
+                
+//figure out type casting error from integer ro float
+                print("this is indexpath.row  \(indexPath.row)")
+                print("this is todoItem!.count  \(todoItems!.count)")
+                print("this is indexpath.row/todoItem!.count \(indexPath.row / todoItems!.count)")
+                print("this is Float / float \(CGFloat(indexPath.row) /  CGFloat(todoItems!.count))")
+                print("this is color in totoIteam \(color)")
+            
+           
+            }
+            
+            
+            
+            
+            
+            
+            
             
             //  print(item.title)
             //Ternary operator
