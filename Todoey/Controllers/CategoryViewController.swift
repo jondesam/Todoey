@@ -19,11 +19,12 @@ class CategoryViewController: SwipeTableViewController  {
 //CoreData
 //    var categoryArray = [Category]()
     var categoryArray: Results<Category>?
+  
     
 //CoreData
 //  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,8 +56,13 @@ class CategoryViewController: SwipeTableViewController  {
         cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No Categories added yet"
 
         newColorString = categoryArray?[indexPath.row].color ?? "1D9BF6"
+        
+        
+        guard let categoryColor = UIColor(hexString: newColorString) else { fatalError()}
 
-        cell.backgroundColor = UIColor(hexString: newColorString)
+        cell.backgroundColor = categoryColor
+        
+      //  UIColor(randomFlatColorExcludingColorsIn: [UIColor.brown])
         
          print("newColorString is \(newColorString) ")
       
@@ -69,10 +75,11 @@ class CategoryViewController: SwipeTableViewController  {
 //
 //        }
         
+    
+//before making optional binding
+//        cell.textLabel?.textColor = ContrastColorOf(UIColor(hexString: newColorString)!, returnFlat: true)
    
-        
-
-        
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
         return cell
     }
     
@@ -114,7 +121,7 @@ class CategoryViewController: SwipeTableViewController  {
     func loadCategories() {
         
         categoryArray = realm.objects(Category.self)
-      //   newColor = newColorOfCategory.color
+     
         
         tableView.reloadData()
         
@@ -138,28 +145,35 @@ class CategoryViewController: SwipeTableViewController  {
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
        
         var textField = UITextField()
+        let newCategory = Category()
         
-//      newColor = newColorOfCategory.color
         
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Cotegory", style: .default) { (action) in
          
+            
         //CoreData
         //let newCategory = Category(context: self.context)
         //
-        let newCategory = Category()
-        newCategory.name = textField.text!
+       
+      //  let newColorOfCell = Item()
             
-        newCategory.color = UIColor.randomFlat.hexValue()
+            newCategory.name = textField.text!
             
+            newCategory.color = UIColor.randomFlat.hexValue()
+         
+            print("newCategory.Color is \(newCategory.color)")
+          //  newColorOfCell.color = self.newCategory.color
 
+          //  print("newColorOfCell.color is \(newColorOfCell.color)")
 //CoreData
 //    self.categoryArray.append(newCategory)
             
 //        self.saveCategory()
             
-        self.save(category: newCategory)
+            self.save(category: newCategory)
+         
         }
         
         alert.addTextField { (alertTextField) in
@@ -187,8 +201,16 @@ class CategoryViewController: SwipeTableViewController  {
         
          if let indexPath = tableView.indexPathForSelectedRow {
             destinationVC.selectedCategory = categoryArray?[indexPath.row]
+           
             print("this is destinationVC \(destinationVC)")
-         }
+            
+//            destinationVC.hexStringToUIColor(hex: newCategory.color) = categoryArray?[indexPath.row].color ?? "000000"
+            
+            
+//            destinationVC.selectedCategory?.color = hexStringToUIColor(hex: (categoryArray?[indexPath.row].color)!)
+
+//            destinationVC.selectedCategory?.color = categoryArray?[indexPath.row].color ?? "FFFFFF"
+        }
         }
 }
 

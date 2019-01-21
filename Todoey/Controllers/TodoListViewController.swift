@@ -10,6 +10,9 @@ class TodoListViewController: SwipeTableViewController {
     var todoItems : Results<Item>?
     var realm = try! Realm()
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
+    
     //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     //using UserDefaults
@@ -28,9 +31,11 @@ class TodoListViewController: SwipeTableViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        dump("this is itemArray \(todoItems)")
         
       
+        
+      //  dump("this is itemArray \(todoItems)")
+        
   //      dump("this is context \(context)")
         
        // print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
@@ -55,8 +60,99 @@ class TodoListViewController: SwipeTableViewController {
 //        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
 //           itemArray = items
 //        }
+    } //end of viewDidLoad()
+
+    
+   //If let "Optional biding"
+    //        if let colorHex = selectedCategory?.color {
+    //
+    //            title = selectedCategory!.name
+    //
+    //            guard let navBar = navigationController?.navigationBar else {fatalError("navigation controller does not exist") }
+    //
+    //
+    //            if let navBarColour = UIColor(hexString: colorHex) {
+    //
+    //                navBar.barTintColor = navBarColour
+    //
+    //                navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColour, returnFlat: true)]
+    //
+    //                searchBar.barTintColor = navBarColour
+    //
+    //                navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+    //
+    //
+    //            }
+    //
+    //
+    //        }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        title = selectedCategory?.name
+
+        guard let colorHex = selectedCategory?.color  else {fatalError(" ") }
+        
+        updateNavBar(withHexCode: colorHex)
+ 
+//before making updateNavBar
+//        guard let navBar = navigationController?.navigationBar else {fatalError("navigation controller does not exist") }
+        
+//        guard let navBarColour = UIColor(hexString: colorHex) else { fatalError("")}
+//
+//        navBar.barTintColor = navBarColour
+//
+//        navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+//
+//        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColour, returnFlat: true)]
+//        //
+//
+//        searchBar.barTintColor = navBarColour
+        
+        
+        }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+
+//before making updateNavBar
+//        guard let originalColor = UIColor(hexString: "1D9BF6") else { fatalError()}
+        
+//        navigationController?.navigationBar.barTintColor = originalColor
+//
+//        navigationController?.navigationBar.tintColor = FlatWhite()
+//
+//        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: FlatWhite()]
+        
+        updateNavBar(withHexCode: "1D9BF6")
     }
 
+    
+    //MARK: - Nav Bar Setup Methods
+    
+    func updateNavBar(withHexCode colorHexCode:String) {
+        
+        guard let navBar = navigationController?.navigationBar else {fatalError("navigation controller does not exist") }
+        
+        guard let navBarColour = UIColor(hexString: colorHexCode) else { fatalError("")}
+        
+        navBar.barTintColor = navBarColour
+        
+        navBar.tintColor = ContrastColorOf(navBarColour, returnFlat: true)
+        
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColour, returnFlat: true)]
+        //
+        
+        searchBar.barTintColor = navBarColour
+        
+        
+    }
+    
+        
+    
+    
+    
+    
     //MARK: TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -109,7 +205,14 @@ class TodoListViewController: SwipeTableViewController {
             
             cell.textLabel?.text = item.title
             
-         
+            
+            
+          //  let cellColor: String? = todoItems?[indexPath.row].color
+            
+          //  let convertedColor = hexStringToUIColor(hex: cellColor ?? "111111")
+            
+       //     print("this is convertedColor \(convertedColor)")
+            
 // preview lines before optional binding
 //            cell.backgroundColor = FlatSkyBlue().darken(byPercentage:
 //
@@ -121,14 +224,22 @@ class TodoListViewController: SwipeTableViewController {
 
 // with optional binding
             
-            if let color = FlatSkyBlue().darken(byPercentage: CGFloat(indexPath.row) /  CGFloat(todoItems!.count))
+            if let color = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) /  CGFloat(todoItems!.count))
+//
+//            if let color = FlatRed().darken(byPercentage: CGFloat(indexPath.row) /  CGFloat(todoItems!.count))
+            
+             //    if let color = cellColor.darken(byPercentage: CGFloat(indexPath.row) /  CGFloat(todoItems!.count))
+             
+                 // if let color = convertedColor
                 
                 
 // integer / integer = sometimes below 1 always 0
-//                FlatSkyBlue().darken(byPercentage: CGFloat(indexPath.row / todoItems!.count))
-            
+               
             {
+            
                 cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+              
                 
 //figure out type casting error from integer ro float
                 print("this is indexpath.row  \(indexPath.row)")
@@ -140,12 +251,7 @@ class TodoListViewController: SwipeTableViewController {
            
             }
             
-            
-            
-            
-            
-            
-            
+
             
             //  print(item.title)
             //Ternary operator
@@ -238,8 +344,6 @@ class TodoListViewController: SwipeTableViewController {
     }
     
     
-    
-    
     //MARK: Add New Item
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
@@ -310,7 +414,6 @@ class TodoListViewController: SwipeTableViewController {
             
         }
         
-    
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Write new things to do"
@@ -485,6 +588,8 @@ class TodoListViewController: SwipeTableViewController {
         tableView.reloadData()
     }
     
+ 
+    
     
 
     
@@ -567,5 +672,4 @@ extension TodoListViewController: UISearchBarDelegate {
     }
 
 }
-//
-//
+
